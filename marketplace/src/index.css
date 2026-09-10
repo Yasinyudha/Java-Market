@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+@font-face {
+    font-family: "Jakarta Regular";
+    src: url("./assets/fonts/PlusJakartaSans-Regular.ttf");
+}
+
+@font-face {
+    font-family: "Jakarta Medium";
+    src: url("./assets/fonts/PlusJakartaSans-Medium.ttf");
+}
+
+@font-face {
+    font-family: "Jakarta Semibold";
+    src: url("./assets/fonts/PlusJakartaSans-SemiBold.ttf");
+}
+
+@font-face {
+    font-family: "Jakarta Bold";
+    src: url("./assets/fonts/PlusJakartaSans-Bold.ttf");
+}
+
+@theme {
+    --font-jakarta-regular: "Jakarta Regular";
+    --font-jakarta-medium: "Jakarta Medium";
+    --font-jakarta-semibold: "Jakarta Semibold";
+    --font-jakarta-bold: "Jakarta Bold";
+
+    --color-very-light-grey: #f8f9fa;
+    --color-light-grey: #e9ecef;
+    --color-dark-grey: #6c757d;
+    --color-web-purple: #8970c2;
+}

@@ -1,0 +1,34 @@
+# Environment Variables (Sangat Penting!)
+.env
+.env.*
+
+# Air Hot Reload Temporary Build Folder
+tmp/
+
+# Go Binaries & Executables
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+main
+server
+
+# Log Files
+*.log
+
+# Editor & IDE Directories
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS Generated Files
+.DS_Store
+Thumbs.db
