@@ -24,6 +24,18 @@ interface Price {
     price_high: string;
 }
 
+interface ProfileCredentials {
+    username: string;
+    first_name: string;
+    last_name: string;
+}
+
+interface PasswordChanging {
+    current_password: string;
+    new_password: string;
+    confirm_password: string;
+}
+
 interface LandingPageStoreProps {
     // Hold category image urls
     categoryImageUrls: CategoryImageUrl | null;
@@ -52,6 +64,18 @@ interface LandingPageStoreProps {
     // Hold quantity value of product
     quantityOfProduct: number;
     setQuantityOfProduct: (quantityOfProduct: number) => void;
+
+    // Hold profile credentials data
+    profileCredentialsData: ProfileCredentials;
+    setProfileCredentialsData: (
+        profileCredentialsData: ProfileCredentials,
+    ) => void;
+
+    // Hold password data in account security
+    passwordChangingValue: PasswordChanging;
+    setPasswordChangingValue: (
+        passwordChangingValue: Partial<PasswordChanging>,
+    ) => void;
 }
 
 export const useLandingPageStore = create<LandingPageStoreProps>((set) => ({
@@ -95,6 +119,27 @@ export const useLandingPageStore = create<LandingPageStoreProps>((set) => ({
 
     quantityOfProduct: 1,
     setQuantityOfProduct: (newVal) => set({ quantityOfProduct: newVal }),
+
+    profileCredentialsData: {
+        username: "",
+        first_name: "",
+        last_name: "",
+    },
+    setProfileCredentialsData: (newVal) =>
+        set({ profileCredentialsData: newVal }),
+
+    passwordChangingValue: {
+        current_password: "",
+        new_password: "",
+        confirm_password: "",
+    },
+    setPasswordChangingValue: (newValue) =>
+        set((state) => ({
+            passwordChangingValue: {
+                ...state.passwordChangingValue,
+                ...newValue,
+            },
+        })),
 }));
 
 export function useLandingPage<K extends keyof LandingPageStoreProps & string>(

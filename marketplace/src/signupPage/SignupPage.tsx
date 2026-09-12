@@ -77,6 +77,9 @@ const MainContent = () => {
 
                 setUserAuth({
                     avatar_path: data.avatar_path,
+                    first_name: data.first_name,
+                    last_name: data.last_name,
+                    email: data.email,
                 });
 
                 // Reset the form

@@ -6,14 +6,17 @@ import SignupPage from "./signupPage/SignupPage";
 import LoginPage from "./signupPage/LoginPage";
 import MainLayout from "./landingPage/RootLayout";
 import MainContentProductDetails from "./landingPage/productDetail/SubProductDetail";
-import MainContentUserProfile from "./landingPage/userProfile/SubUserProfile";
 import ProductLayout from "./landingPage/ProductLayout";
+import RootUserLayout from "./landingPage/userProfile/RootUserLayout";
+import SubUserProfile from "./landingPage/userProfile/SubUserProfile";
+import SubUserSecurity from "./landingPage/userProfile/SubUserSecurity";
 
 export const rootPath = "/";
 export const userSignup = "/user/signup";
 export const userLogin = "/user/login";
 export const productDetail = "/product/:slug";
 export const profileEditing = "/user/profile";
+export const profileSecurity = "/user/security";
 
 export const createSlug = (text: string): string => {
     return text
@@ -67,10 +70,13 @@ function App() {
             <Route path={userSignup} element={<SignupPage />} />
             <Route path={userLogin} element={<LoginPage />} />
             <Route element={<MainLayout />}>
-                <Route
-                    path={profileEditing}
-                    element={<MainContentUserProfile />}
-                />
+                <Route element={<RootUserLayout />}>
+                    <Route path={profileEditing} element={<SubUserProfile />} />
+                    <Route
+                        path={profileSecurity}
+                        element={<SubUserSecurity />}
+                    />
+                </Route>
                 <Route element={<ProductLayout />}>
                     <Route path={rootPath} element={<MainContentProducts />} />
                     <Route

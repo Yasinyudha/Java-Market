@@ -42,16 +42,6 @@ const MainContent = () => {
         (state) => state.setIsAuthenticated,
     );
 
-    const handleUserAuth = (
-        field: keyof typeof userAuth,
-        value: string | boolean,
-    ) => {
-        setUserAuth({
-            ...userAuth,
-            [field]: value,
-        });
-    };
-
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
@@ -74,9 +64,13 @@ const MainContent = () => {
             if (response.ok) {
                 const data = await response.json();
 
-                handleUserAuth("first_name", data.first_name);
-                handleUserAuth("email", data.email);
-                handleUserAuth("avatar_path", data.avatar_url);
+                setUserAuth({
+                    ...userAuth,
+                    first_name: data.first_name,
+                    last_name: data.last_name,
+                    email: data.email,
+                    avatar_path: data.avatar_url,
+                });
 
                 setIsAuthenticated(true);
 

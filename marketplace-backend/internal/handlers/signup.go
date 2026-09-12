@@ -160,6 +160,7 @@ func (h *InsertSignupHandler) InsertSignup(w http.ResponseWriter, r *http.Reques
 		"message":       "User registered and logged in successfully",
 		"email":         req.Email,
 		"first_name":    req.FirstName,
+		"last_name":     req.LastName,
 		"avatar_path":   url,
 	})
 }

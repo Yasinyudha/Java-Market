@@ -39,12 +39,12 @@ func (h *LoginHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var userID, firstName, hashedPassword, email string
+	var userID, firstName, lastName, hashedPassword, email string
 	var avatarKey sql.NullString
 
-	query := `SELECT id, first_name, password, email, avatar_key FROM users WHERE email = ?`
+	query := `SELECT id, first_name, last_name, password, email, avatar_key FROM users WHERE email = ?`
 	err = h.DB.QueryRowContext(r.Context(), query, req.Email).Scan(
-		&userID, &firstName, &hashedPassword, &email, &avatarKey,
+		&userID, &firstName, &lastName, &hashedPassword, &email, &avatarKey,
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
@@ -108,6 +108,7 @@ func (h *LoginHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		"authenticated": true,
 		"message":       "Login successful",
 		"first_name":    firstName,
+		"last_name":     lastName,
 		"email":         email,
 		"avatar_url":    avatarURL,
 	})
