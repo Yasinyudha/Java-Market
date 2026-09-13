@@ -8,7 +8,10 @@ import MainLayout from "./landingPage/RootLayout";
 import MainContentProductDetails from "./landingPage/productDetail/SubProductDetail";
 import ProductLayout from "./landingPage/ProductLayout";
 import RootUserLayout from "./landingPage/userProfile/RootUserLayout";
-import SubUserProfile from "./landingPage/userProfile/SubUserProfile";
+import SubUserProfile, {
+    ChangeEmail,
+    ProfileCredentials,
+} from "./landingPage/userProfile/SubUserProfile";
 import SubUserSecurity from "./landingPage/userProfile/SubUserSecurity";
 
 export const rootPath = "/";
@@ -16,6 +19,7 @@ export const userSignup = "/user/signup";
 export const userLogin = "/user/login";
 export const productDetail = "/product/:slug";
 export const profileEditing = "/user/profile";
+export const profileEditingEmail = "/user/profile/change-email";
 export const profileSecurity = "/user/security";
 
 export const createSlug = (text: string): string => {
@@ -71,7 +75,16 @@ function App() {
             <Route path={userLogin} element={<LoginPage />} />
             <Route element={<MainLayout />}>
                 <Route element={<RootUserLayout />}>
-                    <Route path={profileEditing} element={<SubUserProfile />} />
+                    <Route element={<SubUserProfile />}>
+                        <Route
+                            path={profileEditing}
+                            element={<ProfileCredentials />}
+                        />
+                        <Route
+                            path={profileEditingEmail}
+                            element={<ChangeEmail />}
+                        />
+                    </Route>
                     <Route
                         path={profileSecurity}
                         element={<SubUserSecurity />}

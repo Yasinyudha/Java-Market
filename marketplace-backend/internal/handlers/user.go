@@ -70,6 +70,7 @@ func (h *LoginHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		ID:        userID,
 		Email:     email,
 		FirstName: firstName,
+		LastName:  lastName,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -222,5 +223,44 @@ func HandleUserAuth(w http.ResponseWriter, r *http.Request) {
 		"email":         claims.Email,
 		"first_name":    claims.FirstName,
 		"avatar_path":   avatarProxyUrl,
+	})
+}
+
+func GetMeAuth(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	cookie, err := r.Cookie("auth_token")
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"authenticated": false,
+			"message":       "Session expired or not found",
+		})
+		return
+	}
+
+	claims, err := ValidateJWT(cookie.Value)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"authenticated": false,
+			"message":       "Invalid or expired token",
+		})
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"authenticated": true,
+		"id":            claims.ID,
+		"first_name":    claims.FirstName,
+		"last_name":     claims.LastName,
+		"email":         claims.Email,
 	})
 }

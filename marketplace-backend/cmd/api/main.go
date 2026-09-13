@@ -92,6 +92,9 @@ func main() {
 	}
 	http.HandleFunc("/api/user/login", enableCORS(loginHandler.LoginHandler))
 
+	// Set API for get user credentials after signup or login
+	http.HandleFunc("/api/user/get-auth", enableCORS(handlers.GetMeAuth))
+
 	// Set Api for detail product handler
 	getDetailProductHandler := &handlers.GetDetailProductHandler{
 		DB: db,

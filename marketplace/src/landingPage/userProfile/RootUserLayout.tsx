@@ -1,7 +1,11 @@
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useSignupStore } from "../../signupPage/SignupStore";
 import { IconKey, IconProfile } from "../LandingPageIcon";
-import { profileEditing, profileSecurity } from "../../App";
+import {
+    profileEditing,
+    profileEditingEmail,
+    profileSecurity,
+} from "../../App";
 
 const MenuOptions = ({
     Icon,
@@ -64,7 +68,10 @@ function RootUserLayout() {
                                 Icon={<IconProfile />}
                                 name="My Profile"
                                 navigateTo={profileEditing}
-                                isActive={location.pathname === profileEditing}
+                                isActive={
+                                    location.pathname === profileEditing ||
+                                    location.pathname === profileEditingEmail
+                                }
                             />
                             <MenuOptions
                                 Icon={<IconKey />}
