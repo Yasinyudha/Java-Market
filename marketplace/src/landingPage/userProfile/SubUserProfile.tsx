@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useSignupStore } from "../../signupPage/SignupStore";
 import { Link, Outlet } from "react-router-dom";
-import { profileEditingEmail } from "../../App";
+import { profileEditing, profileEditingEmail } from "../../App";
+import { IconBackArrow } from "../../signupPage/SignupPageIcon";
 
 export const ChangeEmail = () => {
     const userAuth = useSignupStore((state) => state.userAuth);
@@ -28,7 +29,13 @@ export const ChangeEmail = () => {
                     </div>
                 </div>
             </div>
-            <div className="flex justify-end mt-10">
+            <div className="flex justify-between items-center mt-10">
+                <Link to={profileEditing}>
+                    <div className="flex gap-2">
+                        <IconBackArrow />
+                        <span>Back to change profile</span>
+                    </div>
+                </Link>
                 <button className="bg-web-purple text-white px-6 py-2 font-jakarta-semibold rounded-md hover:cursor-pointer hover:bg-web-purple/90 transition-all">
                     Change Email
                 </button>

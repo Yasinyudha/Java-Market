@@ -1,9 +1,10 @@
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useSignupStore } from "../../signupPage/SignupStore";
 import { IconKey, IconProfile } from "../LandingPageIcon";
 import {
     profileEditing,
     profileEditingEmail,
+    profileEditingImage,
     profileSecurity,
 } from "../../App";
 
@@ -52,9 +53,11 @@ function RootUserLayout() {
                             />
                         )}
                         <div className="flex flex-col justify-end-safe gap-3 w-fit">
-                            <div className="bg-dark-grey/10 border border-dark-grey px-6 py-2 text-sm">
-                                <span>Choose your profile image</span>
-                            </div>
+                            <Link to={profileEditingImage}>
+                                <div className="bg-dark-grey/10 border border-dark-grey px-6 py-2 text-sm">
+                                    <span>Choose your profile image</span>
+                                </div>
+                            </Link>
                             <div className="flex flex-col">
                                 <span>The image must be below 1MB</span>
                                 <span>Supported format: .JPEG, .JPG, .PNG</span>

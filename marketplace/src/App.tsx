@@ -13,12 +13,14 @@ import SubUserProfile, {
     ProfileCredentials,
 } from "./landingPage/userProfile/SubUserProfile";
 import SubUserSecurity from "./landingPage/userProfile/SubUserSecurity";
+import SubUserChangeImage from "./landingPage/userProfile/SubUserChangeImage";
 
 export const rootPath = "/";
 export const userSignup = "/user/signup";
 export const userLogin = "/user/login";
 export const productDetail = "/product/:slug";
 export const profileEditing = "/user/profile";
+export const profileEditingImage = "/user/profile/change-image";
 export const profileEditingEmail = "/user/profile/change-email";
 export const profileSecurity = "/user/security";
 
@@ -88,6 +90,10 @@ function App() {
                     <Route
                         path={profileSecurity}
                         element={<SubUserSecurity />}
+                    />
+                    <Route
+                        path={profileEditingImage}
+                        element={<SubUserChangeImage />}
                     />
                 </Route>
                 <Route element={<ProductLayout />}>
