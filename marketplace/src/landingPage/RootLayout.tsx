@@ -1,4 +1,4 @@
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import {
     IconCart,
     IconDropdown,
@@ -68,19 +68,18 @@ const SidebarProfile = () => {
     const userAuth = useSignupStore((state) => state.userAuth);
     const avatarPath = userAuth.avatar_path;
 
-    const navigate = useNavigate();
-
     return (
         <div className="py-2 w-full flex items-center justify-center">
             <div className="flex flex-col gap-5 items-center">
                 <IconInformation />
-                <IconSettings />
+                <Link to={profileEditing}>
+                    <IconSettings />
+                </Link>
                 {avatarPath && (
                     <img
                         src={avatarPath}
                         alt="avatar-image"
-                        className="w-8 h-8 rounded-full object-cover hover:cursor-pointer"
-                        onClick={() => navigate(profileEditing)}
+                        className="w-8 h-8 rounded-full object-cover"
                     />
                 )}
             </div>
