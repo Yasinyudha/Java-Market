@@ -9,8 +9,9 @@ import MainContentProductDetails from "./landingPage/productDetail/SubProductDet
 import ProductLayout from "./landingPage/ProductLayout";
 import RootUserLayout from "./landingPage/userProfile/RootUserLayout";
 import SubUserProfile, {
-    ChangeEmail,
+    RequestOTPCode,
     ProfileCredentials,
+    ProfileEditingEmail,
 } from "./landingPage/userProfile/SubUserProfile";
 import SubUserSecurity from "./landingPage/userProfile/SubUserSecurity";
 import SubUserChangeImage from "./landingPage/userProfile/SubUserChangeImage";
@@ -22,6 +23,7 @@ export const productDetail = "/product/:slug";
 export const profileEditing = "/user/profile";
 export const profileEditingImage = "/user/profile/change-image";
 export const profileEditingEmail = "/user/profile/change-email";
+export const profileEditingOtp = "/user/profile/change-email/otp";
 export const profileSecurity = "/user/security";
 
 export const createSlug = (text: string): string => {
@@ -83,8 +85,12 @@ function App() {
                             element={<ProfileCredentials />}
                         />
                         <Route
+                            path={profileEditingOtp}
+                            element={<RequestOTPCode />}
+                        />
+                        <Route
                             path={profileEditingEmail}
-                            element={<ChangeEmail />}
+                            element={<ProfileEditingEmail />}
                         />
                     </Route>
                     <Route

@@ -101,6 +101,43 @@ func main() {
 	}
 	http.HandleFunc("/api/refresh/detail-product", enableCORS(getDetailProductHandler.GetDetailProduct))
 
+	// Set API for upload avatar image
+	uploadAvatarHandler := &handlers.UploadAvatarHandler{
+		DB:       db,
+		S3Client: (*database.S3Client)(s3Client),
+	}
+	http.HandleFunc("/upload", enableCORS(uploadAvatarHandler.UploadAvatar))
+
+	// Set API for change user credentials
+	changeProfileCredentialHandler := &handlers.ChangeProfileCredentialHandler{
+		DB: db,
+	}
+	http.HandleFunc("/api/user/change-credentials", enableCORS(changeProfileCredentialHandler.ChangeProfileCredential))
+
+	// Set API for changing password
+	confirmPasswordHandler := &handlers.ConfirmPasswordHandler{
+		DB: db,
+	}
+	http.HandleFunc("/api/user/change-password", enableCORS(confirmPasswordHandler.ConfirmPassword))
+
+	// Set API for generating OTP
+	OTPHandler := &handlers.OTPHandler{
+		DB: db,
+	}
+	http.HandleFunc("/api/user/generate-otp", enableCORS(OTPHandler.OTPRequestFunc))
+
+	// Set API for verify OTP
+	verifyOTPHandler := &handlers.VerifyOTPHandler{
+		DB: db,
+	}
+	http.HandleFunc("/api/user/verify-otp", enableCORS(verifyOTPHandler.VerifyOTP))
+
+	// Set API for update email request
+	updateEmailHandler := &handlers.UpdateEmailHandler{
+		DB: db,
+	}
+	http.HandleFunc("/api/user/update-email", enableCORS(updateEmailHandler.UpdateEmail))
+
 	log.Println("Server running at http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

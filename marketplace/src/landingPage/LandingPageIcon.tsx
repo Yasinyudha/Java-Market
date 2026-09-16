@@ -486,3 +486,85 @@ export const IconUpload = () => (
         />
     </svg>
 );
+
+export const IconBackLarge = () => (
+    <svg
+        width="18"
+        height="10"
+        viewBox="0 0 18 10"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+    >
+        <path
+            d="M1.41431 5H16.4143"
+            stroke="#6C757D"
+            stroke-width="2"
+            stroke-linecap="round"
+        />
+        <path
+            d="M5.41431 1L1.41431 5L5.41431 9"
+            stroke="#6C757D"
+            stroke-width="2"
+            stroke-linecap="round"
+        />
+    </svg>
+);
+
+export const IconCartGray = () => (
+    <svg
+        width="18"
+        height="16"
+        viewBox="0 0 18 16"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+    >
+        <path
+            d="M0.5 0.5H2.1685L3.95264 10.0154C4.18392 11.5518 4.96035 11.2709 5.72026 11.2709H13.9141C14.674 11.2709 15.1861 11.1553 15.5847 10.0154L16.739 6.03414C17.0054 5.10903 17.3151 4.36564 16.5882 4.36564H2.89331"
+            stroke="#6C757D"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+        />
+        <path
+            d="M14.9052 13.2534H4.4977C3.83691 13.2534 3.44043 12.7247 3.44043 12.2291C3.44043 11.7336 3.83691 11.271 4.4977 11.271H9.32149"
+            stroke="#6C757D"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+        />
+        <path
+            d="M3.96899 7.7688H15.8633"
+            stroke="#6C757D"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+        />
+        <path
+            d="M6.16635 4.59693L7.30621 10.8745"
+            stroke="#6C757D"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+        />
+        <path
+            d="M9.94922 4.58032L9.94922 10.8744"
+            stroke="#6C757D"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+        />
+        <path
+            d="M13.98 4.53075L12.5924 10.8744"
+            stroke="#6C757D"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+        />
+        <path
+            d="M6.76104 15.5001C7.35408 15.5001 7.83483 15.0194 7.83483 14.4263C7.83483 13.8333 7.35408 13.3525 6.76104 13.3525C6.16801 13.3525 5.68726 13.8333 5.68726 14.4263C5.68726 15.0194 6.16801 15.5001 6.76104 15.5001Z"
+            stroke="#6C757D"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+        />
+        <path
+            d="M13.7322 15.5001C14.3253 15.5001 14.806 15.0194 14.806 14.4263C14.806 13.8333 14.3253 13.3525 13.7322 13.3525C13.1392 13.3525 12.6584 13.8333 12.6584 14.4263C12.6584 15.0194 13.1392 15.5001 13.7322 15.5001Z"
+            stroke="#6C757D"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+        />
+    </svg>
+);

@@ -123,6 +123,7 @@ func (h *InsertSignupHandler) InsertSignup(w http.ResponseWriter, r *http.Reques
 		ID:        userID,
 		Email:     req.Email,
 		FirstName: req.FirstName,
+		LastName:  req.LastName,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),

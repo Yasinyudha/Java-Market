@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"strings"
@@ -105,4 +106,18 @@ func (s *S3Client) GeneratePresignedURL(objectKey string) (string, error) {
 	}
 
 	return req.URL, nil
+}
+
+func (s *S3Client) UploadFile(ctx context.Context, objectKey string, body io.Reader, contentType string) error {
+	_, err := s.Client.PutObject(ctx, &s3.PutObjectInput{
+		Bucket:      aws.String(s.Bucket),
+		Key:         aws.String(objectKey),
+		Body:        body,
+		ContentType: aws.String(contentType),
+	})
+	if err != nil {
+		return fmt.Errorf("Failed to put object to S3: %w", err)
+	}
+
+	return nil
 }

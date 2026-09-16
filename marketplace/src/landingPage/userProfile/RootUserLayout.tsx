@@ -1,11 +1,12 @@
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useSignupStore } from "../../signupPage/SignupStore";
-import { IconKey, IconProfile } from "../LandingPageIcon";
+import { IconBackLarge, IconKey, IconProfile } from "../LandingPageIcon";
 import {
     profileEditing,
     profileEditingEmail,
     profileEditingImage,
     profileSecurity,
+    rootPath,
 } from "../../App";
 
 const MenuOptions = ({
@@ -82,6 +83,14 @@ function RootUserLayout() {
                                 navigateTo={profileSecurity}
                                 isActive={location.pathname === profileSecurity}
                             />
+                            <Link to={rootPath}>
+                                <div className="flex gap-2 items-center px-4 py-2 hover:cursor-pointer mt-8">
+                                    <IconBackLarge />
+                                    <span className="text-sm font-jakarta-regular">
+                                        Back to main page
+                                    </span>
+                                </div>
+                            </Link>
                         </div>
                     </div>
                 </div>

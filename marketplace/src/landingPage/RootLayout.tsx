@@ -1,6 +1,7 @@
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import {
     IconCart,
+    IconCartGray,
     IconDropdown,
     IconInformation,
     IconNotification,
@@ -8,7 +9,7 @@ import {
     IconSettings,
 } from "./LandingPageIcon";
 import { useSignupStore } from "../signupPage/SignupStore";
-import { profileEditing, userLogin, userSignup } from "../App";
+import { profileEditing, rootPath, userLogin, userSignup } from "../App";
 
 const MainContentHeader = () => {
     const isAuthenticated = useSignupStore((state) => state.isAuthenticated);
@@ -57,9 +58,18 @@ const MainContentHeader = () => {
 };
 
 const SidebarIcons = () => {
+    const location = useLocation();
+    const isProfileActive = location.pathname.startsWith("/user");
+
     return (
-        <div className="py-2 bg-web-purple w-full flex items-center justify-center">
-            <IconCart />
+        <div
+            className={`py-2 w-full flex items-center justify-center ${
+                isProfileActive ? "bg-transparent" : "bg-web-purple"
+            }`}
+        >
+            <Link to={rootPath}>
+                {isProfileActive ? <IconCartGray /> : <IconCart />}
+            </Link>
         </div>
     );
 };
