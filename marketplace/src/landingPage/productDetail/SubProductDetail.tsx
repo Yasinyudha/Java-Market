@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
     IconCartLarge,
     IconLargeStarts,
@@ -9,11 +9,13 @@ import {
 import { useLandingPage, useLandingPageStore } from "../LandingPageStore";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { useEffect } from "react";
 
 const ProductDetailHeader = () => {
-    const selectedProduct = useLandingPageStore(
-        (state) => state.selectedProduct,
-    );
+    const setNumCheckout = useLandingPageStore((state) => state.setNumCheckout);
+
+    const [selectedProduct, setSelectedProduct] =
+        useLandingPage("selectedProduct");
 
     const [quantityOfProduct, setQuantityOfProduct] =
         useLandingPage("quantityOfProduct");
@@ -29,6 +31,62 @@ const ProductDetailHeader = () => {
         const nextValue = quantityOfProduct + 1;
         setQuantityOfProduct(nextValue);
     };
+
+    const handleAddToCart = async () => {
+        try {
+            const addResponse = await fetch(
+                "http://localhost:8080/api/user/add-checkout",
+                {
+                    method: "POST",
+                    credentials: "include",
+                    body: JSON.stringify({
+                        id_product: selectedProduct.id,
+                        quantity: quantityOfProduct,
+                    }),
+                },
+            );
+
+            if (addResponse.ok) {
+                const addData = await addResponse.json();
+                alert(addData.message);
+
+                const countResponse = await fetch(
+                    "http://localhost:8080/api/fetch/checkout",
+                    { method: "GET", credentials: "include" },
+                );
+
+                if (countResponse.ok) {
+                    const countData = await countResponse.json();
+                    setNumCheckout(countData.length); // Update Zustand store
+                }
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const { id } = useParams<{ id: string }>();
+    useEffect(() => {
+        const handler = async () => {
+            const response = await fetch(
+                "http://localhost:8080/api/fetch/product-detail",
+                {
+                    method: "POST",
+                    credentials: "include",
+                    body: JSON.stringify({
+                        id: Number(id),
+                    }),
+                },
+            );
+
+            if (response.ok) {
+                const data = await response.json();
+                setSelectedProduct(data);
+            }
+        };
+
+        handler();
+    }, []);
 
     return (
         <div className="grid grid-cols-2 mt-8 gap-8 overflow-auto max-h-full">
@@ -78,10 +136,15 @@ const ProductDetailHeader = () => {
                     </div>
                 </div>
                 <div className="flex gap-5">
-                    <div className="flex gap-5 bg-web-purple/10 border border-web-purple text-base items-center px-10 py-3 font-jakarta-semibold">
+                    <button
+                        onClick={() => {
+                            handleAddToCart();
+                        }}
+                        className="flex gap-5 bg-web-purple/10 border border-web-purple text-base items-center px-10 py-3 font-jakarta-semibold hover:cursor-pointer"
+                    >
                         <IconCartLarge />
                         <span>Add to cart</span>
-                    </div>
+                    </button>
                     <div className="flex bg-web-purple px-15 py-3 font-jakarta-bold text-white items-center text-base">
                         <span>Buy now</span>
                     </div>

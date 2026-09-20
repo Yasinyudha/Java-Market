@@ -18,14 +18,13 @@ type S3Client struct {
 	Bucket string
 }
 
-func InitS3() (*S3Client, error) {
+func InitS3(bucketName string) (*S3Client, error) {
 	// 1. Muat variabel dari .env
 	_ = godotenv.Load()
 
 	endpoint := os.Getenv("MINIO_ENDPOINT")
 	accessKey := os.Getenv("MINIO_ACCESS_KEY")
 	secretKey := os.Getenv("MINIO_SECRET_KEY")
-	bucketName := os.Getenv("MINIO_BUCKET")
 
 	// Bersihkan URL dari awalan http:// atau https://
 	cleanEndpoint := strings.TrimPrefix(endpoint, "https://")

@@ -76,6 +76,18 @@ interface LandingPageStoreProps {
     setPasswordChangingValue: (
         passwordChangingValue: Partial<PasswordChanging>,
     ) => void;
+
+    // Hold the number of checkouts
+    numCheckout: number;
+    setNumCheckout: (numCheckout: number) => void;
+
+    // Hold the selected checkout
+    selectedCheckout: number;
+    setSelectedCheckout: (selectedCheckout: number) => void;
+
+    // Hold the total price of checkout
+    totalPriceArr: number[];
+    setTotalPriceArr: (totalPriceArr: number[]) => void;
 }
 
 export const useLandingPageStore = create<LandingPageStoreProps>((set) => ({
@@ -140,6 +152,15 @@ export const useLandingPageStore = create<LandingPageStoreProps>((set) => ({
                 ...newValue,
             },
         })),
+
+    numCheckout: 0,
+    setNumCheckout: (newVal) => set({ numCheckout: newVal }),
+
+    selectedCheckout: 0,
+    setSelectedCheckout: (newVal) => set({ selectedCheckout: newVal }),
+
+    totalPriceArr: [],
+    setTotalPriceArr: (newVal) => set({ totalPriceArr: newVal }),
 }));
 
 export function useLandingPage<K extends keyof LandingPageStoreProps & string>(

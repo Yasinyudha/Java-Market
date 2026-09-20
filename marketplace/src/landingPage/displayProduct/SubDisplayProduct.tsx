@@ -54,7 +54,9 @@ export const MainContentProducts = () => {
             <div className="flex justify-between w-full items-end">
                 <div className="flex flex-col">
                     <span className="text-sm font-jakarta-bold">Products</span>
-                    <span>Showing 7,457 products</span>
+                    <span>
+                        Showing {productData.length.toLocaleString()} products
+                    </span>
                 </div>
                 <div className="flex gap-2 items-center">
                     <span>Sort by</span>
@@ -84,7 +86,9 @@ export const MainContentProducts = () => {
                                 address: product.address,
                                 description: product.description,
                             });
-                            navigate(`/product/${createSlug(product.name)}`);
+                            navigate(
+                                `/product/${product.id}/${createSlug(product.name)}`,
+                            );
                         }}
                     >
                         <img

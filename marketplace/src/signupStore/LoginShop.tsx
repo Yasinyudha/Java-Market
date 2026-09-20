@@ -1,8 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
-import { rootPath } from "../App";
-import { IconBackArrow } from "./SignupPageIcon";
-import { useSignup, useSignupStore } from "./SignupStore";
 import { useEffect, useState } from "react";
+import { useSignup, useSignupStore } from "../signupPage/SignupStore";
+import { rootPath } from "../App";
+import { IconBackArrow } from "../signupPage/SignupPageIcon";
 
 interface InputNameTemplateProps {
     placeholder: string;
@@ -43,6 +43,7 @@ const MainContent = () => {
     );
 
     const [email, setEmail] = useState<string>("");
+    const [store, setStore] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -148,7 +149,7 @@ const MainContent = () => {
             </div>
             <div className="rounded-r-2xl shadow-[0_0_10px_rgba(0,0,0,0.1)] border border-dark-grey/20 px-8 py-8 text-dark-grey">
                 <h1 className="text-3xl font-jakarta-semibold">
-                    Log in to your account
+                    Log in to your store
                 </h1>
                 <form onSubmit={handleSubmit} className="mt-10">
                     <div className="flex flex-col gap-3 mt-3">
@@ -157,6 +158,12 @@ const MainContent = () => {
                             isPassword={false}
                             value={email}
                             onDataChange={(value) => setEmail(value)}
+                        />
+                        <InputNameTemplate
+                            placeholder="Username of your store"
+                            isPassword={false}
+                            value={store}
+                            onDataChange={(value) => setStore(store)}
                         />
                         <InputNameTemplate
                             placeholder="Input your password"
@@ -172,21 +179,12 @@ const MainContent = () => {
                         <span>Log in</span>
                     </button>
                 </form>
-                <div className="grid grid-cols-[2fr_1fr_2fr] items-center gap-3 text-xs mt-3">
-                    <div className="w-full border border-dark-grey"></div>
-                    <span className="whitespace-nowrap">Or log in with</span>
-                    <div className="w-full border border-dark-grey"></div>
-                </div>
-                <div className="rounded-md border border-dark-grey/50 w-full py-3 flex gap-3 items-center justify-center mt-3">
-                    <img src={googleUrl} alt="Google Logo" className="w-5" />
-                    <span>Google</span>
-                </div>
             </div>
         </div>
     );
 };
 
-function LoginPage() {
+function LoginStore() {
     return (
         <div className="h-screen flex items-center justify-center font-jakarta-regular text-sm">
             <MainContent />
@@ -194,4 +192,4 @@ function LoginPage() {
     );
 }
 
-export default LoginPage;
+export default LoginStore;

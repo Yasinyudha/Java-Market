@@ -44,10 +44,15 @@ func (h *LoginHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	var userID, firstName, lastName, hashedPassword, email string
 	var avatarKey sql.NullString
+	var isSeller bool
 
-	query := `SELECT id, first_name, last_name, password, email, avatar_key FROM users WHERE email = ?`
+	query := `SELECT 
+			id, first_name, last_name, password, email, avatar_key,
+			EXISTS(SELECT 1 FROM stores WHERE id_user = users.id) AS is_seller
+		FROM users
+		WHERE email = ?`
 	err = h.DB.QueryRowContext(r.Context(), query, req.Email).Scan(
-		&userID, &firstName, &lastName, &hashedPassword, &email, &avatarKey,
+		&userID, &firstName, &lastName, &hashedPassword, &email, &avatarKey, &isSeller,
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
@@ -74,6 +79,7 @@ func (h *LoginHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		Email:     email,
 		FirstName: firstName,
 		LastName:  lastName,
+		IsSeller:  isSeller,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -118,6 +124,7 @@ func (h *LoginHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		"last_name":     lastName,
 		"email":         email,
 		"avatar_url":    avatarURL,
+		"is_seller":     isSeller,
 	})
 }
 
@@ -712,5 +719,68 @@ func (h *UpdateEmailHandler) UpdateEmail(w http.ResponseWriter, r *http.Request)
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]string{
 		"message": "Email updated successfully",
+	})
+}
+
+type AddToCheckoutRequest struct {
+	IDProduct int `json:"id_product"`
+	Quantity  int `json:"quantity"`
+}
+
+type AddToCheckoutHandler struct {
+	DB *sql.DB
+}
+
+func (h *AddToCheckoutHandler) AddToCheckout(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Invalid HTTP method", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var req AddToCheckoutRequest
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	cookie, err := r.Cookie("auth_token")
+	if err != nil {
+		http.Error(w, "Session expired, try to log in", http.StatusInternalServerError)
+		return
+	}
+
+	claims, err := ValidateJWT(cookie.Value)
+	if err != nil {
+		http.Error(w, "Session or token is invalid, try to log in again", http.StatusInternalServerError)
+		return
+	}
+
+	query := `
+		INSERT INTO checkouts (id_user, id_product, quantity)
+		VALUES (?, ?, ?)
+		ON DUPLICATE KEY UPDATE 
+			quantity = VALUES(quantity)
+	`
+	_, err = h.DB.ExecContext(r.Context(), query,
+		claims.ID,
+		req.IDProduct,
+		req.Quantity,
+	)
+
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"message": "Failed to add item to checkout",
+			"error":   err.Error(),
+		})
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"message": "Item added to checkout successfully",
 	})
 }

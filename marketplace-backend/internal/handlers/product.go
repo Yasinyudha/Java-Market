@@ -4,9 +4,13 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"log"
+	"marketplace/internal/database"
 	"marketplace/internal/global"
 	"net/http"
 )
+
+const PublicURL = "https://txsegowmnagykxyqjxlz.supabase.co/storage/v1/object/public/public-marketplace/"
 
 type ProductHandler struct {
 	DB *sql.DB
@@ -51,9 +55,6 @@ func (h *ProductHandler) FetchProduct(w http.ResponseWriter, r *http.Request) {
 	}
 	defer rows.Close()
 
-	// Set the public URL
-	publicURL := "https://txsegowmnagykxyqjxlz.supabase.co/storage/v1/object/public/public-marketplace/"
-
 	var products []global.Product
 	for rows.Next() {
 		var p global.Product
@@ -79,7 +80,7 @@ func (h *ProductHandler) FetchProduct(w http.ResponseWriter, r *http.Request) {
 
 		// Assemble the URL
 		if p.Filepath != "" {
-			p.Filepath = publicURL + p.Filepath
+			p.Filepath = PublicURL + p.Filepath
 		}
 
 		products = append(products, p)
@@ -144,4 +145,149 @@ func (h *GetDetailProductHandler) GetDetailProduct(w http.ResponseWriter, r *htt
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(p)
+}
+
+type GetProductDetailRequest struct {
+	ID int `json:"id"`
+}
+
+type GetProductDetailResponse struct {
+	ID           int     `json:"id"`
+	Name         string  `json:"name"`
+	ReviewNumber float64 `json:"review_number"`
+	City         string  `json:"city"`
+	Province     string  `json:"province"`
+	Price        float64 `json:"price"`
+	Filepath     string  `json:"filepath"`
+	Country      string  `json:"country"`
+	Trademark    string  `json:"trademark"`
+	Address      string  `json:"address"`
+	Description  string  `json:"description"`
+}
+
+type GetProductDetailHandler struct {
+	DB     *sql.DB
+	Client *database.S3Client
+}
+
+func (h *GetProductDetailHandler) GetProductDetail(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Invalid HTTP method", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var req GetProductDetailRequest
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	var product GetProductDetailResponse
+	query := `SELECT id, name, review_number, city, province, price, filepath, country, trademark, address, description 
+			  FROM products WHERE id = ?`
+	err = h.DB.QueryRowContext(r.Context(), query, req.ID).Scan(
+		&product.ID,
+		&product.Name,
+		&product.ReviewNumber,
+		&product.City,
+		&product.Province,
+		&product.Price,
+		&product.Filepath,
+		&product.Country,
+		&product.Trademark,
+		&product.Address,
+		&product.Description,
+	)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			http.Error(w, "Product not found", http.StatusNotFound)
+			return
+		}
+
+		log.Printf("ERR Scan GetProductDetail: %v", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	product.Filepath = PublicURL + product.Filepath
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(product)
+}
+
+type GetCheckoutItemResponse struct {
+	IDProduct int     `json:"id_product"`
+	Quantity  int     `json:"quantity"`
+	Name      string  `json:"name"`
+	Price     float64 `json:"price"`
+	Filepath  string  `json:"filepath"`
+}
+
+type GetCheckoutItemHandler struct {
+	DB *sql.DB
+}
+
+func (h *GetCheckoutItemHandler) GetCheckoutItem(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Invalid HTTP method", http.StatusMethodNotAllowed)
+		return
+	}
+
+	cookie, err := r.Cookie("auth_token")
+	if err != nil {
+		http.Error(w, "Session expired, try to log in", http.StatusInternalServerError)
+		return
+	}
+
+	claims, err := ValidateJWT(cookie.Value)
+	if err != nil {
+		http.Error(w, "Session or token is invalid, try to log in again", http.StatusInternalServerError)
+		return
+	}
+
+	query := `
+		SELECT
+			c.id_product,
+			c.quantity,
+			p.name,
+			p.price,
+			p.filepath
+		FROM checkouts c
+		JOIN products p ON c.id_product = p.id
+		WHERE c.id_user = ?;
+	`
+	rows, err := h.DB.QueryContext(r.Context(), query, claims.ID)
+	if err != nil {
+		http.Error(w, "Failed to fetch cart items", http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	cartItems := make([]GetCheckoutItemResponse, 0)
+	for rows.Next() {
+		var item GetCheckoutItemResponse
+		err := rows.Scan(
+			&item.IDProduct,
+			&item.Quantity,
+			&item.Name,
+			&item.Price,
+			&item.Filepath,
+		)
+		if err != nil {
+			http.Error(w, "Error scanning data", http.StatusInternalServerError)
+			return
+		}
+		item.Filepath = PublicURL + item.Filepath
+		cartItems = append(cartItems, item)
+	}
+
+	if err := rows.Err(); err != nil {
+		http.Error(w, "Error iterating rows", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(cartItems)
 }

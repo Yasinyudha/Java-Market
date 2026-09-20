@@ -6,6 +6,7 @@ import (
 	"marketplace/internal/handlers"
 	objectstorage "marketplace/internal/objectstorage"
 	"net/http"
+	"os"
 
 	"github.com/joho/godotenv"
 )
@@ -38,12 +39,12 @@ func main() {
 	}
 	defer db.Close()
 
-	_, err = objectstorage.InitS3()
+	s3Client, err := objectstorage.InitS3(os.Getenv("MINIO_BUCKET"))
 	if err != nil {
-		log.Fatalf("Can't connect to object storage: %s", err)
+		log.Fatalf("Failed to connect with object storage %v", err)
 	}
 
-	s3Client, err := objectstorage.InitS3()
+	s3PublicClient, err := objectstorage.InitS3(os.Getenv("MINIO_PUBLIC_BUCKET"))
 	if err != nil {
 		log.Fatalf("Failed to connect with object storage %v", err)
 	}
@@ -137,6 +138,32 @@ func main() {
 		DB: db,
 	}
 	http.HandleFunc("/api/user/update-email", enableCORS(updateEmailHandler.UpdateEmail))
+
+	// Set API for add to checkout
+	addToCheckoutHandler := &handlers.AddToCheckoutHandler{
+		DB: db,
+	}
+	http.HandleFunc("/api/user/add-checkout", enableCORS(addToCheckoutHandler.AddToCheckout))
+
+	// Set API for get product detail from id
+	getProductDetailHandler := &handlers.GetProductDetailHandler{
+		DB:     db,
+		Client: (*database.S3Client)(s3Client),
+	}
+	http.HandleFunc("/api/fetch/product-detail", enableCORS(getProductDetailHandler.GetProductDetail))
+
+	// Set API for get checkouts
+	getCheckoutItemHandler := &handlers.GetCheckoutItemHandler{
+		DB: db,
+	}
+	http.HandleFunc("/api/fetch/checkout", enableCORS(getCheckoutItemHandler.GetCheckoutItem))
+
+	// Set API for user register stores
+	registerStoreHandler := &handlers.RegisterStoreHandler{
+		DB:       db,
+		S3Client: (*database.S3Client)(s3PublicClient),
+	}
+	http.HandleFunc("/api/user/register-store", enableCORS(registerStoreHandler.RegisterStore))
 
 	log.Println("Server running at http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))

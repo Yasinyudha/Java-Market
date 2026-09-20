@@ -15,16 +15,26 @@ import SubUserProfile, {
 } from "./landingPage/userProfile/SubUserProfile";
 import SubUserSecurity from "./landingPage/userProfile/SubUserSecurity";
 import SubUserChangeImage from "./landingPage/userProfile/SubUserChangeImage";
+import OrderDetails from "./landingPage/orderDetails/OrderDetails";
+import SubDisplayShop, {
+    MainDisplayShop,
+} from "./landingPage/shop/SubDisplayShop";
+import LoginStore from "./signupStore/LoginShop";
+import SignupStore from "./signupStore/SignupShop";
 
 export const rootPath = "/";
 export const userSignup = "/user/signup";
 export const userLogin = "/user/login";
-export const productDetail = "/product/:slug";
+export const productDetail = "/product/:id/:slug";
 export const profileEditing = "/user/profile";
 export const profileEditingImage = "/user/profile/change-image";
 export const profileEditingEmail = "/user/profile/change-email";
 export const profileEditingOtp = "/user/profile/change-email/otp";
 export const profileSecurity = "/user/security";
+export const orderDetails = "/product/:user/orders";
+export const shop = "/shop";
+export const loginStore = "/shop/login";
+export const signupStore = "/shop/signup";
 
 export const createSlug = (text: string): string => {
     return text
@@ -109,7 +119,13 @@ function App() {
                         element={<MainContentProductDetails />}
                     />
                 </Route>
+                <Route element={<SubDisplayShop />}>
+                    <Route path={shop} element={<MainDisplayShop />} />
+                </Route>
+                <Route path={orderDetails} element={<OrderDetails />} />
             </Route>
+            <Route path={loginStore} element={<LoginStore />} />
+            <Route path={signupStore} element={<SignupStore />} />
         </Routes>
     );
 }

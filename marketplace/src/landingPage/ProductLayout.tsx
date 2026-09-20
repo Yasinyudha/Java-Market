@@ -216,7 +216,7 @@ const MainContentSidebar = () => {
 
 function ProductLayout() {
     return (
-        <div className="flex-1 flex border-t border-light-grey pt-6 items-start">
+        <div className="flex-1 flex border-t border-light-grey pt-6 items-start pl-10">
             <MainContentSidebar />
             <Outlet />
         </div>
