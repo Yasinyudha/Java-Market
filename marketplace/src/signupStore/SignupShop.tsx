@@ -3,6 +3,7 @@ import { rootPath } from "../App";
 import { useEffect, useState, useRef } from "react";
 import { IconBackArrow } from "../signupPage/SignupPageIcon";
 import { IconUpload } from "./SignupIcon";
+import { useSignup } from "../signupPage/SignupStore";
 
 interface InputNameTemplateProps {
     placeholder: string;
@@ -79,7 +80,8 @@ const MainContent = () => {
     const [logoFile, setLogoFile] = useState<File | null>(null);
     const [logoPreview, setLogoPreview] = useState<string>("");
     const [isTermSelected, setIsTermSelected] = useState<boolean>(false);
-    const [isLoading, setIsLoading] = useState<boolean>(false); // 1. Tambah state isLoading
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [userAuth, setUserAuth] = useSignup("userAuth");
 
     const fileInputRef = useRef<HTMLInputElement>(null);
     const navigate = useNavigate();
@@ -161,6 +163,11 @@ const MainContent = () => {
 
             if (response.ok) {
                 alert(data.message || "Store created successfully!");
+                setUserAuth({
+                    ...userAuth,
+                    is_seller: true,
+                    logo_filepath: data.store.logo_filepath,
+                });
                 navigate(rootPath);
             } else {
                 alert(data.message || "Failed to register store");

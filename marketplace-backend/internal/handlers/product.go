@@ -8,6 +8,8 @@ import (
 	"marketplace/internal/database"
 	"marketplace/internal/global"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 const PublicURL = "https://txsegowmnagykxyqjxlz.supabase.co/storage/v1/object/public/public-marketplace/"
@@ -290,4 +292,74 @@ func (h *GetCheckoutItemHandler) GetCheckoutItem(w http.ResponseWriter, r *http.
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(cartItems)
+}
+
+type AddNewProductRequest struct {
+	Name        string  `form:"name" binding:"required"`
+	Price       float32 `form:"price" binding:"required"`
+	City        string  `form:"city" binding:"required"`
+	Province    string  `form:"province" binding:"required"`
+	Country     string  `form:"country" binding:"required"`
+	Trademark   string  `form:"trademark" binding:"required"`
+	Address     string  `form:"address" binding:"required"`
+	Description string  `form:"description" binding:"required"`
+}
+
+func AddNewProduct(db *sql.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+
+		var input AddNewProductRequest
+		if err := c.ShouldBind(&input); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"success": false,
+				"message": "Validation error: " + err.Error(),
+			})
+			return
+		}
+
+		fileHeader, err := c.FormFile("photo")
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"success": false,
+				"message": "Foto produk wajib diunggah: " + err.Error(),
+			})
+			return
+		}
+		filepath := "products/" + fileHeader.Filename
+
+		query := `
+			INSERT INTO products (
+				name, review_number, price, created_at, 
+				filepath, city, province, country, trademark, 
+				address, description, slug
+			) 
+			VALUES (?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?)
+		`
+
+		_, err = db.ExecContext(c.Request.Context(), query,
+			input.Name,
+			0,
+			input.Price,
+			filepath,
+			input.City,
+			input.Province,
+			input.Country,
+			input.Trademark,
+			input.Address,
+			input.Description,
+			"test",
+		)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"success": false,
+				"message": "Failed to insert product: " + err.Error(),
+			})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"success": true,
+			"message": "Product created succesfully",
+		})
+	}
 }

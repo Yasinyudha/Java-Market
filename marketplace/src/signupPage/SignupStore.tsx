@@ -14,6 +14,8 @@ export interface AuthCredentials {
     email: string | null;
     avatar_path: string | null;
     is_seller: boolean | null;
+    logo_filepath: string | null;
+    store_name: string | null;
 }
 
 interface SignupProps {
@@ -57,6 +59,8 @@ export const useSignupStore = create<SignupProps>((set) => ({
         email: null,
         avatar_path: null,
         is_seller: null,
+        logo_filepath: null,
+        store_name: null,
     },
     setUserAuth: (newAuth) =>
         set((state) => ({

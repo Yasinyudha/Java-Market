@@ -63,6 +63,20 @@ func (h *LoginHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var storeName, logoFilepath string
+	if isSeller {
+		queryWhenExists := `SELECT name, logo_filepath FROM stores WHERE id_user = ?`
+		err = h.DB.QueryRowContext(r.Context(), queryWhenExists, userID).Scan(&storeName, &logoFilepath)
+		if err != nil {
+			http.Error(w, "Failed fetching from stores table", http.StatusInternalServerError)
+			return
+		}
+
+		logoFilepath = PublicURL + logoFilepath
+	} else {
+		logoFilepath = ""
+	}
+
 	err = bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(req.Password))
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
@@ -125,6 +139,8 @@ func (h *LoginHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		"email":         email,
 		"avatar_url":    avatarURL,
 		"is_seller":     isSeller,
+		"logo_filepath": logoFilepath,
+		"store_name":    storeName,
 	})
 }
 

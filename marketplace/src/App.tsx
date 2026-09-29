@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import { MainContentProducts } from "./landingPage/displayProduct/SubDisplayProduct";
-import { useSignupStore } from "./signupPage/SignupStore";
+import { useSignup, useSignupStore } from "./signupPage/SignupStore";
 import { useEffect } from "react";
 import SignupPage from "./signupPage/SignupPage";
 import LoginPage from "./signupPage/LoginPage";
@@ -21,6 +21,7 @@ import SubDisplayShop, {
 } from "./landingPage/shop/SubDisplayShop";
 import LoginStore from "./signupStore/LoginShop";
 import SignupStore from "./signupStore/SignupShop";
+import SubUserStore from "./landingPage/userProfile/SubUserStore";
 
 export const rootPath = "/";
 export const userSignup = "/user/signup";
@@ -31,6 +32,7 @@ export const profileEditingImage = "/user/profile/change-image";
 export const profileEditingEmail = "/user/profile/change-email";
 export const profileEditingOtp = "/user/profile/change-email/otp";
 export const profileSecurity = "/user/security";
+export const profileStore = "/user/store";
 export const orderDetails = "/product/:user/orders";
 export const shop = "/shop";
 export const loginStore = "/shop/login";
@@ -46,7 +48,7 @@ export const createSlug = (text: string): string => {
 };
 
 function App() {
-    const setUserAuth = useSignupStore((state) => state.setUserAuth);
+    const [userAuth, setUserAuth] = useSignup("userAuth");
     const setIsAuthenticated = useSignupStore(
         (state) => state.setIsAuthenticated,
     );
@@ -66,9 +68,13 @@ function App() {
                     const data = await response.json();
 
                     setUserAuth({
+                        ...userAuth,
                         first_name: data.first_name,
                         email: data.email,
                         avatar_path: data.avatar_url,
+                        is_seller: data.is_seller,
+                        logo_filepath: data.logo_filepath,
+                        store_name: data.store_name,
                     });
 
                     setIsAuthenticated(true);
@@ -102,6 +108,7 @@ function App() {
                             path={profileEditingEmail}
                             element={<ProfileEditingEmail />}
                         />
+                        <Route path={profileStore} element={<SubUserStore />} />
                     </Route>
                     <Route
                         path={profileSecurity}

@@ -50,14 +50,29 @@ const MainContentHeader = () => {
     }, []);
 
     return (
-        <div className="relative flex items-center justify-center">
+        <div className="relative flex items-center justify-center overflow-hidden">
             <div className="absolute left-10 top-1/2 -translate-y-1/2 flex gap-5 font-jakarta-medium text-dark-grey">
-                <Link to={signupStore}>
-                    <span>Register as seller</span>
-                </Link>
-                <Link to={loginStore}>
-                    <span>Log in as seller</span>
-                </Link>
+                {userAuth.is_seller ? (
+                    <div className="flex gap-3 items-center">
+                        <img
+                            src={userAuth.logo_filepath ?? ""}
+                            alt="image"
+                            className="rounded-full w-7"
+                        />
+                        <span className="font-jakarta-semibold text-sm">
+                            {userAuth.store_name}
+                        </span>
+                    </div>
+                ) : (
+                    <>
+                        <Link to={signupStore}>
+                            <span>Register as seller</span>
+                        </Link>
+                        <Link to={loginStore}>
+                            <span>Log in as seller</span>
+                        </Link>
+                    </>
+                )}
             </div>
             <div className="w-[30%] h-10 rounded-md bg-very-light-grey border border-dark-grey/10 flex items-center px-4 gap-4">
                 <IconSearchHeader />

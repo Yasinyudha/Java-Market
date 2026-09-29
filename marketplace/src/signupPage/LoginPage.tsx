@@ -71,6 +71,7 @@ const MainContent = () => {
                     email: data.email,
                     avatar_path: data.avatar_url,
                     is_seller: data.is_seller,
+                    logo_filepath: data.logo_filepath,
                 });
 
                 setIsAuthenticated(true);

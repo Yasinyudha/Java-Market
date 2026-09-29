@@ -1,11 +1,17 @@
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useSignupStore } from "../../signupPage/SignupStore";
-import { IconBackLarge, IconKey, IconProfile } from "../LandingPageIcon";
+import {
+    IconBackLarge,
+    IconKey,
+    IconProfile,
+    IconStoreProfile,
+} from "../LandingPageIcon";
 import {
     profileEditing,
     profileEditingEmail,
     profileEditingImage,
     profileSecurity,
+    profileStore,
     rootPath,
 } from "../../App";
 
@@ -42,7 +48,7 @@ function RootUserLayout() {
     const location = useLocation();
 
     return (
-        <div className="flex flex-col text-xs text-dark-grey flex-1 w-full mx-10 border-t border-light-grey self-center px-10 pt-10">
+        <div className="flex flex-col text-xs text-dark-grey flex-1 w-full mx-10 border-t border-light-grey self-center px-10 pb-10">
             <div className="max-w-5xl self-center w-full grid grid-cols-[1.3fr_2fr] py-5">
                 <div className="flex flex-col gap-8">
                     <div className="grid grid-cols-[1fr_2fr] gap-8">
@@ -82,6 +88,12 @@ function RootUserLayout() {
                                 name="Account Security"
                                 navigateTo={profileSecurity}
                                 isActive={location.pathname === profileSecurity}
+                            />
+                            <MenuOptions
+                                Icon={<IconStoreProfile />}
+                                name="Store"
+                                navigateTo={profileStore}
+                                isActive={location.pathname === profileStore}
                             />
                             <Link to={rootPath}>
                                 <div className="flex gap-2 items-center px-4 py-2 hover:cursor-pointer mt-8">

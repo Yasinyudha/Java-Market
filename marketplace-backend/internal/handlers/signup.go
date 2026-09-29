@@ -210,6 +210,36 @@ func (h *GetProfileHandler) GetProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var isSeller bool
+	query = `SELECT EXISTS(SELECT 1 FROM stores WHERE id_user = ?) AS is_seller`
+	err = h.DB.QueryRowContext(r.Context(), query, claims.ID).Scan(&isSeller)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"authenticated": false,
+			"message":       "Failed to detect whether user has store or not",
+		})
+		return
+	}
+
+	var storeName, logoFilepath string
+	if isSeller {
+		query = `SELECT name, logo_filepath FROM stores WHERE id_user = ?`
+		err = h.DB.QueryRowContext(r.Context(), query, claims.ID).Scan(&storeName, &logoFilepath)
+		logoFilepath = PublicURL + logoFilepath
+
+		if err != nil {
+			w.WriteHeader(http.StatusNotFound)
+			json.NewEncoder(w).Encode(map[string]interface{}{
+				"authenticated": false,
+				"message":       "Error while processing store logo",
+			})
+			return
+		}
+	} else {
+		logoFilepath = ""
+	}
+
 	// 4. Buat Presigned URL baru (berlaku 24 jam) jika avatar_key tersedia
 	var avatarURL string
 	if avatarKey.Valid && avatarKey.String != "" {
@@ -226,5 +256,8 @@ func (h *GetProfileHandler) GetProfile(w http.ResponseWriter, r *http.Request) {
 		"first_name":    firstName,
 		"email":         email,
 		"avatar_url":    avatarURL,
+		"logo_filepath": logoFilepath,
+		"is_seller":     isSeller,
+		"store_name":    storeName,
 	})
 }
